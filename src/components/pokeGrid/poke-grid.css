@@ -10,9 +10,3 @@
 
 .pokedex__grid-item:hover .pokedex_grid-view-details,
 .pokedex__grid-item:focus .pokedex_grid-view-details { opacity: 1; visibility: visible; transition: all ease-in-out 0.2s; }
-
-.pokedex__grid-filter { display: flex; justify-content: space-between; padding: 20px; }
-
-.pokedex__grid-label { margin: 0 10px 0 0; }
-
-.pokedex__grid-select { height: 30px; width: 150px; }

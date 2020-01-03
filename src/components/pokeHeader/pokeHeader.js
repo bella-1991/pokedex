@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import './poke-header.css'
 
-export default class PokeHeader extends Component {
+class PokeHeader extends Component {
     clearPoke = _ => {
         this.props.clearPoke()
     }
@@ -23,3 +23,5 @@ export default class PokeHeader extends Component {
         )
     }
 }
+
+export default  PokeHeader

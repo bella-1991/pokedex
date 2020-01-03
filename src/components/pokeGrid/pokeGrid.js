@@ -1,58 +1,32 @@
 import React, { Component } from 'react'
+
+import PokeFilter from '../pokeFilters/pokeFilter'
 import './poke-grid.css'
 
-const sortOptions = [
-    {
-        code: 'ASCE',
-        value: 'Ascending'
-    },
-    {
-        code: 'DESC',
-        value: 'Descending'
-    }
-]
-
-export default class PokeGrid extends Component {
-    selectedPoke = poke => {
-        this.props.selectedPoke(poke)
+class PokeGrid extends Component {
+    selectedPoke = selectedPoke => {
+        this.props.selectedPoke(selectedPoke)
     }
 
-    handleSortChange = sort => {
-        this.props.handleSortChange(sort)
-    }
-    
     handleTypeChange = type => {
         this.props.handleTypeChange(type)
     }
 
+    handleSortChange = type => {
+        this.props.handleSortChange(type)
+    }
+
     render () {
-        const { sprites, defaultSort, filterTypes, defaultType } = this.props
+        const { sprites, defaultSort, defaultType, pokeTypes, sortOptions } = this.props
 
         return (
-            <div className="pokedex__grid">
-                <div className="pokedex__grid-filter">
-                    <div className="pokedex__grid-filter-container">
-                        <label className="pokedex__grid-label">Filter By Type</label>
-                        <select value={defaultType} onChange={e => this.handleTypeChange(e.target.value)} className="pokedex__grid-select">
-                            <option value="ALL"> --All-- </option>
-                            {
-                                filterTypes.map((option, key) => 
-                                    <option key={key} value={option.name}>{option.name}</option>
-                                )
-                            }
-                        </select>
-                    </div>
-                    <div className="pokedex__grid-filter-container">
-                        <label className="pokedex__grid-label">Sort</label>
-                        <select value={defaultSort} onChange={e => this.handleSortChange(e.target.value)} className="pokedex__grid-select">
-                            {
-                                sortOptions.map((option, key) => 
-                                    <option key={key} value={option.code}>{option.value}</option>
-                                )
-                            }
-                        </select>
-                    </div>
-                </div>
+            <div className="pokedex__grid">          
+                <PokeFilter defaultSort={defaultSort} 
+                            defaultType={defaultType} 
+                            pokeTypes={pokeTypes} 
+                            sortOptions={sortOptions}
+                            handleTypeChange={this.handleTypeChange}
+                            handleSortChange={this.handleSortChange} />
                 <div className="pokedex__grid-container">
                     {
                         sprites.map((sprite, index) => 
@@ -70,3 +44,5 @@ export default class PokeGrid extends Component {
         )
     }
 }
+
+export default PokeGrid
