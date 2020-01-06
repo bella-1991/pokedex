@@ -15,7 +15,9 @@ class Main extends Component {
     }
 
     handleTypeChange = type => {
-        this.props.dispatch(actions.handleTypeChange(type))
+        const { defaultSort, allPokes } = this.props
+
+        this.props.dispatch(actions.handleTypeChange(type, allPokes, defaultSort))
         this.setState()
     }
 

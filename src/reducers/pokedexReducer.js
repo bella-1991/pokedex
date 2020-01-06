@@ -22,7 +22,7 @@ var defaultState = {
 
 function pokeDexReducer(state = defaultState, action) {
     switch (action.type) {
-        case (types.RECEIVED_SORTED_POKES):
+        case (types.RECEIVED_SORTED_POKES_SUCCESS):
             return {
                 ...state,
                 allPokes: action.data,
@@ -56,15 +56,16 @@ function pokeDexReducer(state = defaultState, action) {
                 ...state,
                 overlay: true
             }
-        case (types.CHANGE_SORT_TYPE):
+        case (types.REQUEST_SORT_TYPE_CHANGE):
             return {
                 ...state,
-                defaultSort: action.data.type
+                defaultSort: action.data,
+                overlay: true
             }
         case (types.CHANGE_POKE_TYPE):
             return {
                 ...state,
-                defaultType: action.data.type
+                defaultType: action.data
             }
         case (types.RECEIVED_POKE_TYPES_FAILURE):
             return {

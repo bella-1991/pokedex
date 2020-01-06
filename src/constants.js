@@ -10,12 +10,11 @@ export var ActionTypes = keyMirror({
     RECEIVED_POKE_TYPES_FAILURE: null,
     COULD_NOT_GET_POKE_TYPES: "Could not find any Poke Types. Please try again later",
     CHANGE_POKE_TYPE: null,
-    CHANGE_SORT_TYPE: null,
+    REQUEST_SORT_TYPE_CHANGE: null,
     REQUEST_SELECTED_POKE: null,
     RECEIVED_SELECTED_POKE_SUCCESS: null,
     RECEIVED_SELECTED_POKE_FAILURE: null,
     COULD_NOT_GET_SELECTED_POKE: 'Could not get selected poke details. Please try again later',
     CLEAR_POKE: null,
-    REQUEST_SORT_POKES: null,
-    RECEIVED_SORTED_POKES: null
+    RECEIVED_SORTED_POKES_SUCCESS: null
 })

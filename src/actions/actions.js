@@ -14,32 +14,23 @@ export function fetchPokeTypes() {
   }
 }
 
-export function handleTypeChange(type) {
-  return {
-    type: types.CHANGE_POKE_TYPE,
-    data: { type: type }
+export function handleTypeChange(type, allPokes, defaultSort) {
+  return (dispatch) => {
+    if (type === 'ALL') {
+      fetchAllPokesAjaxCall(defaultSort, dispatch)
+    } else { 
+      fetchTypePokesAjaxCall(type, allPokes, dispatch)
+    }
   }
 }
 
 export function handleSortChange(type, allPokes) {
-  // return {
-  //   type: types.CHANGE_SORT_TYPE,
-  //   data: { type: type }
-  // }
 
-  // const sortedPokes = getSortPokes(allPokes, type)
-
-  // dispatch({ type:types.RECEIVED_ALL_POKES_SUCCESS, data: sortedPokes })
-
-  return (dispatch) => {
+  return (dispatch) => {    
     const sortedPokes = getSortPokes(allPokes, type)
 
-    const data = {
-      
-    }
-
-    dispatch({ type:types.CHANGE_SORT_TYPE, data: type })
-    dispatch({ type:types.RECEIVED_ALL_POKES_SUCCESS, data: sortedPokes })
+    dispatch({ type:types.REQUEST_SORT_TYPE_CHANGE, data: type })
+    dispatch({ type:types.RECEIVED_SORTED_POKES_SUCCESS, data: sortedPokes })
   }
 }
 
@@ -55,10 +46,62 @@ export function clearPoke() {
   }
 }
 
+
+
+function getSortPokes(allPokes, sortOrder) {
+  let sortedPokes
+
+  switch(sortOrder) {
+    case 'ASCE':
+        sortedPokes = allPokes.sort((a, b) => a.name.localeCompare(b.name))
+        break;
+    case 'DESC':
+        sortedPokes = allPokes.sort((a, b) => a.name.localeCompare(b.name)).reverse()
+        break;
+    default:
+        return
+  }
+
+  return sortedPokes  
+}
+
+function getTypePokes(allPokes, typePokes) {
+
+  // const newPokes = allPokes.filter(poke => {
+  //   // console.log(poke.name)
+  //   // console.log(typePokes.find(x => x.pokemon.name === poke.name ))
+  //   const names = typePokes.map(typePoke => {
+  //     // console.log(typePoke.pokemon.name === poke.name)
+  //     return typePoke.pokemon.name === poke.name 
+  //   })
+    
+  //   console.log(names)
+  // })
+
+  var newPokes = allPokes.reduce(function(filtered, typePokes) {
+    console.log(filtered)
+    console.log(typePokes)
+    // if (option.assigned) {
+    //    var someNewValue = { name: option.name, newProperty: 'Foo' }
+    //    filtered.push(someNewValue);
+    // }
+    return filtered;
+  }, []);
+
+  const sortedPokes = typePokes.filter(pokemon => {
+    return allPokes.find(x => x.name === pokemon.pokemon.name)
+  });
+
+  console.log(newPokes)
+
+  return sortedPokes  
+}
+
+
 function fetchAllPokesAjaxCall (defaultSort, dispatch) {
   dispatch({type:types.REQUEST_ALL_POKES})
 
-  axios.get('https://pokeapi.co/api/v2/pokemon?limit=151')
+  axios.get('https://pokeapi.co/api/v2/pokemon?limit=10')
   .then((resp) => {
     const sortedPokes = getSortPokes(resp.data.results, defaultSort)
 
@@ -96,50 +139,19 @@ function fetchSelectedPokeAjaxCall (poke, dispatch) {
   })
 }
 
-function getSortPokes(allPokes, sortOrder) {
-  let sortedPokes
+function fetchTypePokesAjaxCall (type, allPokes, dispatch) {
+  dispatch({ type: types.CHANGE_POKE_TYPE, data: type })
 
-  
-  console.log(allPokes)
+  axios.get(`https://pokeapi.co/api/v2/type/${type}`)
+  .then((resp) => {
+    const sortedPokes = getTypePokes(allPokes, resp.data.pokemon)
 
-  switch(sortOrder) {
-    case 'ASCE':
-        sortedPokes = allPokes.sort((a, b) => a.name.localeCompare(b.name))
-        break;
-    case 'DESC':
-        sortedPokes = allPokes.sort((a, b) => a.name.localeCompare(b.name)).reverse()
-        break;
-    default:
-        return
-  }
+    console.log(sortedPokes)
 
-  console.log(sortedPokes)
-
-  return sortedPokes  
+    dispatch({ type:types.RECEIVED_ALL_POKES_SUCCESS, data: sortedPokes })
+  })
+  .catch((resp) => {
+    const msg = types.COULD_NOT_GET_SELECTED_POKE
+    // dispatch({ type: types.RECEIVED_SELECTED_POKE_FAILURE, data: {msg: msg, failedCall: 'fetch poke types'} })
+  })
 }
-
-// function fetchSortedPokesAjaxCall (allPokes, sortOrder, dispatch) {
-//   let sortedPokes
-  
-//   dispatch({ type: types.REQUEST_SORT_POKES })
-//   console.log(allPokes)
-//   console.log(sortOrder)
-
-//   switch(sortOrder) {
-//     case 'ASCE':
-//         sortedPokes = allPokes.sort((a, b) => a.name.localeCompare(b.name))
-
-//         console.log(sortedPokes)
-//         break;
-//     case 'DESC':
-//         sortedPokes = allPokes.sort((a, b) => a.name.localeCompare(b.name)).reverse()
-//         break;
-//     default:
-//         return
-//   }
-
-//   console.log(sortedPokes)
-
-//   dispatch({ type: types.RECEIVED_SORTED_POKES, data: sortedPokes })
-
-// }
