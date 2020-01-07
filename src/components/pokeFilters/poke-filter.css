@@ -1,5 +1,5 @@
-.pokedex__grid-filter { display: flex; justify-content: space-between; padding: 20px; }
+.pokedex__grid-filter { display: flex; justify-content: space-between; padding: 20px 20px 40px; }
 
 .pokedex__grid-label { margin: 0 10px 0 0; }
 
-.pokedex__grid-select { height: 30px; width: 150px; }
+.pokedex__grid-select { height: 30px; width: 150px; text-transform: capitalize; }

@@ -1,48 +1,58 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 
-import PokeFilter from '../pokeFilters/pokeFilter'
+import * as actions from '../../actions/actions'
 import './poke-grid.css'
 
 class PokeGrid extends Component {
+
+    componentWillMount() {
+        const { defaultType, defaultSort, pages } = this.props,
+            data = {
+                defaultType: defaultType,
+                defaultSort: defaultSort,
+                pages: pages
+            }
+
+        this.props.dispatch(actions.getAllPokes(data))
+    }
+
     selectedPoke = selectedPoke => {
-        this.props.selectedPoke(selectedPoke)
+        console.log(selectedPoke)
+        this.props.dispatch(actions.selectedPoke(selectedPoke))
     }
 
-    handleTypeChange = type => {
-        this.props.handleTypeChange(type)
-    }
-
-    handleSortChange = type => {
-        this.props.handleSortChange(type)
+    getSpriteId = url => {
+        return `../sprites/${url.split('pokemon/').pop().split('/')[0]}.png`
     }
 
     render () {
-        const { sprites, defaultSort, defaultType, pokeTypes, sortOptions } = this.props
+        const { sprites } = this.props
 
         return (
-            <div className="pokedex__grid">          
-                <PokeFilter defaultSort={defaultSort} 
-                            defaultType={defaultType} 
-                            pokeTypes={pokeTypes} 
-                            sortOptions={sortOptions}
-                            handleTypeChange={this.handleTypeChange}
-                            handleSortChange={this.handleSortChange} />
+            <div className="pokedex__grid"> 
                 <div className="pokedex__grid-container">
-                    {
-                        sprites.map((sprite, index) => 
+                    { sprites.map((sprite, index) => (
                             <div className="pokedex__grid-item" key={index} onClick={() => this.selectedPoke(sprite.name)}>
-                                <img src={`../sprites/${index+1}.png`} alt={sprite.name} />
+                                <img src={this.getSpriteId(sprite.url)} alt={sprite.name} />
                                 <span className="pokedex__grid-title">{sprite.name}</span>  
                                 <div className="pokedex_grid-view-details">
                                     view details
                                 </div>              
                             </div>
                         )
-                    }
+                    )}
                 </div>
             </div>
         )
     }
 }
 
-export default PokeGrid
+export default connect((state, props) => {
+    return {
+        defaultType: state.pokedexReducer.defaultType,
+        defaultSort: state.pokedexReducer.defaultSort,
+        sprites: state.pokedexReducer.allPokes,
+        pages: state.pokedexReducer.pages,
+    }
+})(PokeGrid)

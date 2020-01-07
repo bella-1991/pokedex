@@ -1,157 +1,249 @@
 import axios from 'axios'
 
-import { ActionTypes as types } from '../constants'
+import { URLS as urls, ActionTypes as types, Labels as errorLabels } from '../constants'
 
-export function fetchAllPokes(defaultSort) {
+// get all pokemon sorted and filtered
+export function getAllPokes(params) {
+  return (dispatch) => fetchAllPokes(params, dispatch)
+}
+
+// poke type category changed
+export function handleTypeChange(data) {
+  return (dispatch) => { 
+    dispatch({ type: types.CHANGE_POKE_TYPE, data: data.defaultType })
+    fetchAllPokes(data, dispatch)
+  }
+}
+
+// poke sort order changed
+export function handleSortChange(data) {
   return (dispatch) => {
-      fetchAllPokesAjaxCall(defaultSort, dispatch)
+    dispatch({ type: types.REQUEST_SORT_TYPE_CHANGE, data: data.defaultSort })
+    fetchAllPokes(data, dispatch)
   }
 }
 
-export function fetchPokeTypes() {
-  return (dispatch) => {
-    fetchPokeTypesAjaxCall(dispatch)
-  }
-}
-
-export function handleTypeChange(type, allPokes, defaultSort) {
-  return (dispatch) => {
-    if (type === 'ALL') {
-      fetchAllPokesAjaxCall(defaultSort, dispatch)
-    } else { 
-      fetchTypePokesAjaxCall(type, allPokes, dispatch)
-    }
-  }
-}
-
-export function handleSortChange(type, allPokes) {
-
-  return (dispatch) => {    
-    const sortedPokes = getSortPokes(allPokes, type)
-
-    dispatch({ type:types.REQUEST_SORT_TYPE_CHANGE, data: type })
-    dispatch({ type:types.RECEIVED_SORTED_POKES_SUCCESS, data: sortedPokes })
-  }
-}
-
+// get selected pokemon
 export function selectedPoke(poke) {
   return (dispatch) => {
     fetchSelectedPokeAjaxCall(poke, dispatch)
   }
 }
 
+// clear selected pokemon
 export function clearPoke() {
   return {
     type: types.CLEAR_POKE
   }
 }
 
+// load more poke
+export function morePoke(data) {
+  return (dispatch) => {
+    // fetchMorePokeAjaxCall(defaultType, defaultSort, pages, dispatch)
+    dispatch({ type:types.REQUEST_SORT_TYPE_CHANGE, data: data.pages  })
+    fetchAllPokes(data, dispatch)
+  }
+}
 
+// function getTypeAndSortedPokes (defaultSort, allPokes, AllTypePokes) {
+//   let typePokes, sortedPokes
 
-function getSortPokes(allPokes, sortOrder) {
-  let sortedPokes
+//   // filter according to type
+//   if (allPokes === AllTypePokes) {
+//     typePokes = allPokes
+//   } else { 
+//     typePokes =  allPokes.filter(allPoke => {
+//       return AllTypePokes.find(typePoke => {
+//         if (allPoke.name === typePoke.pokemon.name)
+//         {
+//           return allPoke
+//         }
+//       })
+//     })
+//   }
 
-  switch(sortOrder) {
+//   // sorted according to order
+//   switch(defaultSort) {
+//     case 'ASCE':
+//         sortedPokes = typePokes.sort((a, b) => a.name.localeCompare(b.name))
+//         break;
+//     case 'DESC':
+//         sortedPokes = typePokes.sort((a, b) => a.name.localeCompare(b.name)).reverse()
+//         break;
+//     default:
+//         return
+//   }
+
+//   return sortedPokes
+// }
+
+function getTypeAndSortedPokes(options, allPokes, AllTypePokes) {
+  let typePokes, sortedPokes
+
+  // filter according to type
+  if (options.defaultType === 'ALL') {
+    typePokes = allPokes
+  } else { 
+    typePokes =  allPokes.filter(allPoke => {
+      return AllTypePokes.find(typePoke => {
+        if (allPoke.name === typePoke.pokemon.name)
+        {
+          return allPoke
+        }
+      })
+    })
+  }
+
+  // sorted according to order
+  switch(options.defaultSort) {
     case 'ASCE':
-        sortedPokes = allPokes.sort((a, b) => a.name.localeCompare(b.name))
+        sortedPokes = typePokes.sort((a, b) => a.name.localeCompare(b.name))
         break;
     case 'DESC':
-        sortedPokes = allPokes.sort((a, b) => a.name.localeCompare(b.name)).reverse()
+        sortedPokes = typePokes.sort((a, b) => a.name.localeCompare(b.name)).reverse()
         break;
     default:
         return
   }
 
-  return sortedPokes  
+  return sortedPokes
 }
 
-function getTypePokes(allPokes, typePokes) {
+// function fetchAllPokesAjaxCall (defaultType, defaultSort, dispatch) {
+//   dispatch({ type:types.REQUEST_ALL_POKES })
 
-  // const newPokes = allPokes.filter(poke => {
-  //   // console.log(poke.name)
-  //   // console.log(typePokes.find(x => x.pokemon.name === poke.name ))
-  //   const names = typePokes.map(typePoke => {
-  //     // console.log(typePoke.pokemon.name === poke.name)
-  //     return typePoke.pokemon.name === poke.name 
-  //   })
-    
-  //   console.log(names)
-  // })
+//   // get all pokes
+//   axios.get('https://pokeapi.co/api/v2/pokemon?limit=10&offset=0')
+//   .then((resp) => {
+//     const respResults = resp.data.results
+//     let typePokes
 
-  var newPokes = allPokes.reduce(function(filtered, typePokes) {
-    console.log(filtered)
-    console.log(typePokes)
-    // if (option.assigned) {
-    //    var someNewValue = { name: option.name, newProperty: 'Foo' }
-    //    filtered.push(someNewValue);
-    // }
-    return filtered;
-  }, []);
+//     if (defaultType === 'ALL') {
+//       typePokes = respResults
 
-  const sortedPokes = typePokes.filter(pokemon => {
-    return allPokes.find(x => x.name === pokemon.pokemon.name)
-  });
+//       const sortedPokes = getTypeAndSortedPokes(defaultSort, typePokes, typePokes)
+//       dispatch({ type:types.RECEIVED_ALL_POKES_SUCCESS, data: sortedPokes })
+//     } else { 
 
-  console.log(newPokes)
+//       axios.get(`https://pokeapi.co/api/v2/type/${defaultType}`)
+//       .then((res) => {
+//         typePokes = res.data.pokemon
+        
+//         const sortedPokes = getTypeAndSortedPokes(defaultSort, respResults, typePokes)
+//         console.log(sortedPokes.length)
+        
+//         sortedPokes.length ? dispatch({ type:types.RECEIVED_SORTED_POKES_SUCCESS, data: sortedPokes }) : dispatch({ type:types.NO_SORTED_POKES_FOUD, data: {msg: 'No Pokes found. Please try again'} })
+//       })
+//       .catch((resp) => {
+//         dispatch({ type: types.RECEIVED_SORTED_POKES_FAILURE, data: {msg: types.COULD_NOT_GET_POKES, failedCall: 'fetch sorted pokes'} })
+//       })
+//     }
+//   })
+//   .catch((resp) => {
+//     dispatch({ type: types.RECEIVED_ALL_POKES_FAILURE, data: {msg: types.COULD_NOT_GET_POKES, failedCall: 'fetch pokes'} })
+//   })
+// }
 
-  return sortedPokes  
-}
+// function fetchPokeTypesAjaxCall (dispatch) {
+//   dispatch({type:types.REQUEST_POKE_TYPES})
 
-
-function fetchAllPokesAjaxCall (defaultSort, dispatch) {
-  dispatch({type:types.REQUEST_ALL_POKES})
-
-  axios.get('https://pokeapi.co/api/v2/pokemon?limit=10')
-  .then((resp) => {
-    const sortedPokes = getSortPokes(resp.data.results, defaultSort)
-
-    dispatch({ type:types.RECEIVED_ALL_POKES_SUCCESS, data: sortedPokes })
-  })
-  .catch((resp) => {
-    const msg = types.COULD_NOT_GET_POKES
-    dispatch({ type: types.RECEIVED_ALL_POKES_FAILURE, data: {msg: msg, failedCall: 'fetch pokes'} })
-  })
-}
-
-function fetchPokeTypesAjaxCall (dispatch) {
-  dispatch({type:types.REQUEST_POKE_TYPES})
-
-  axios.get('https://pokeapi.co/api/v2/type')
-  .then((resp) => {
-    dispatch({ type: types.RECEIVED_POKE_TYPES_SUCCESS, data: resp.data.results })
-  })
-  .catch((resp) => {
-    const msg = types.COULD_NOT_GET_POKE_TYPES
-    dispatch({ type: types.RECEIVED_POKE_TYPES_FAILURE, data: {msg: msg, failedCall: 'fetch poke types'} })
-  })
-}
+//   axios.get('https://pokeapi.co/api/v2/type')
+//   .then((resp) => {
+//     dispatch({ type: types.RECEIVED_POKE_TYPES_SUCCESS, data: resp.data.results })
+//   })
+//   .catch((resp) => {
+//     const msg = types.COULD_NOT_GET_POKE_TYPES
+//     dispatch({ type: types.RECEIVED_POKE_TYPES_FAILURE, data: {msg: msg, failedCall: 'fetch poke types'} })
+//   })
+// }
 
 function fetchSelectedPokeAjaxCall (poke, dispatch) {
   dispatch({ type: types.REQUEST_SELECTED_POKE })
 
-  axios.get(`https://pokeapi.co/api/v2/pokemon/${poke}`)
-  .then((resp) => {
+  axios.get(urls.ALL_POKEMON + `/${poke}`).then((resp) => {
     dispatch({ type: types.RECEIVED_SELECTED_POKE_SUCCESS, data: resp.data })
-  })
-  .catch((resp) => {
-    const msg = types.COULD_NOT_GET_SELECTED_POKE
-    dispatch({ type: types.RECEIVED_SELECTED_POKE_FAILURE, data: {msg: msg, failedCall: 'fetch poke types'} })
+  }).catch((resp) => {
+    dispatch({ type: types.RECEIVED_SELECTED_POKE_FAILURE, data: {msg: errorLabels.COULD_NOT_GET_SELECTED_POKE} })
   })
 }
 
-function fetchTypePokesAjaxCall (type, allPokes, dispatch) {
-  dispatch({ type: types.CHANGE_POKE_TYPE, data: type })
+// function fetchMorePokeAjaxCall (defaultType, defaultSort, pages, dispatch) {
+//   const newPage = pages + 1
+//   dispatch({ type:types.REQUEST_MORE_POKES, data: newPage  })
 
-  axios.get(`https://pokeapi.co/api/v2/type/${type}`)
-  .then((resp) => {
-    const sortedPokes = getTypePokes(allPokes, resp.data.pokemon)
+//   // get all pokes
+//   axios.get(`https://pokeapi.co/api/v2/pokemon?limit=10&offset=${newPage*10}`)
+//   .then((resp) => {
+//     const respResults = resp.data.results
+//     let typePokes
 
-    console.log(sortedPokes)
+//     if (defaultType === 'ALL') {
+//       typePokes = respResults
 
-    dispatch({ type:types.RECEIVED_ALL_POKES_SUCCESS, data: sortedPokes })
+//       const sortedPokes = getTypeAndSortedPokes(defaultSort, typePokes, typePokes)
+//       dispatch({ type:types.RECEIVED_MORE_POKES_SUCCESS, data: sortedPokes })
+//     } else { 
+
+//       axios.get(`https://pokeapi.co/api/v2/type/${defaultType}`)
+//       .then((res) => {
+//         typePokes = res.data.pokemon
+
+//         const sortedPokes = getTypeAndSortedPokes(defaultSort, respResults, typePokes)
+//         dispatch({ type:types.RECEIVED_MORE_SORTED_POKES_SUCCESS, data: sortedPokes })
+//       })
+//       .catch((resp) => {
+//         const msg = types.COULD_NOT_GET_POKES
+//         dispatch({ type: types.RECEIVED_MORE_SORTED_POKES_FAILURE, data: {msg: msg, failedCall: 'fetch sorted pokes'} })
+//       })
+//     }
+//   })
+//   .catch((resp) => {
+//     const msg = types.COULD_NOT_GET_POKES
+//     dispatch({ type: types.RECEIVED_MORE_POKES_FAILURE, data: {msg: msg, failedCall: 'fetch pokes'} })
+//   })
+// }
+
+function fetchAllPokes (options, dispatch) {
+  console.log(options)
+  dispatch({ type:types.REQUEST_ALL_POKES })
+
+  // call for all pokes
+  fetchAllPokesAjaxCall(options.pages).then(allPokesData => {
+    dispatch({type:types.REQUEST_POKE_TYPES})
+    
+    // call for all poke types
+    fetchPokeTypesAjaxCall(options.defaultType).then(allPokeTypesData => {  
+
+      const allTypes = allPokeTypesData.data.results ? allPokeTypesData.data.results : allPokeTypesData.data.pokemon,
+            sortedPokes = getTypeAndSortedPokes(options, allPokesData.data.results, allTypes)
+
+      dispatch({ type: types.RECEIVED_POKE_TYPES_SUCCESS, data: allTypes })
+      dispatch({ type:types.RECEIVED_ALL_POKES_SUCCESS, data: sortedPokes })
+    })
+    .catch(allPokeTypesError => {
+      dispatch({ type: types.RECEIVED_POKE_TYPES_FAILURE, data: {msg: errorLabels.COULD_NOT_GET_POKE_TYPES} })
+    })
+  }).catch(allPokesError => {
+    dispatch({ type: types.RECEIVED_ALL_POKES_FAILURE, data: {msg: errorLabels.COULD_NOT_GET_POKES } })
   })
-  .catch((resp) => {
-    const msg = types.COULD_NOT_GET_SELECTED_POKE
-    // dispatch({ type: types.RECEIVED_SELECTED_POKE_FAILURE, data: {msg: msg, failedCall: 'fetch poke types'} })
+}
+
+function fetchAllPokesAjaxCall(pages) {
+  // get all pokes
+  return axios.get(`${urls.ALL_POKEMON}?limit=${urls.POKE_LIMIT*pages}`).then(resp => {
+    return resp
+  }).catch(err => {
+    return err
+  })
+}
+
+function fetchPokeTypesAjaxCall(type) {
+  // if type
+  // get all poke types
+  return axios.get(urls.POKE_TYPES + (type !== 'ALL' ? type : '')).then(resp => {
+    return resp
+  }).catch(err => {
+    return err      
   })
 }

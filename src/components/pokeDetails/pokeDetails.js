@@ -51,4 +51,8 @@ class PokeDetails extends Component {
     }
 }
 
-export default PokeDetails
+export default connect((state, props) => {
+    return { 
+        selectedPoke: state.pokedexReducer.selectedPoke
+    }
+})(PokeDetails)

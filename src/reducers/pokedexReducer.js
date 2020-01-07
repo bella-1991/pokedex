@@ -17,11 +17,56 @@ var defaultState = {
             value: 'Descending'
         }
     ],
-    pokeError: ''
+    pages: 1,
+    morePokes: [],
+    pokeError: '',
 };
 
 function pokeDexReducer(state = defaultState, action) {
     switch (action.type) {
+        case (types.NO_SORTED_POKES_FOUD):
+            console.log(action.data)
+            return {
+                ...state,
+                overlay: false,
+                pokeError: action.data.msg
+            }
+        case (types.RECEIVED_MORE_SORTED_POKES_FAILURE):
+            return {
+                ...state,
+                overlay: false,
+                pokeError: action.data.msg
+            }
+        case (types.RECEIVED_MORE_SORTED_POKES_SUCCESS):
+            return {
+                ...state,
+                morePokes: [...state.morePokes, action.data],
+                overlay: false,
+            }
+        case (types.RECEIVED_MORE_POKES_FAILURE):
+            return {
+                ...state,
+                overlay: false,
+                pokeError: action.data.msg
+            }
+        case (types.RECEIVED_MORE_POKES_SUCCESS):
+            return {
+                ...state,
+                morePokes: [...state.morePokes, action.data],
+                overlay: false,
+            }
+        case (types.REQUEST_MORE_POKES):
+            return {
+                ...state,
+                overlay: true,
+                pages: action.data
+            }
+        case (types.RECEIVED_SORTED_POKES_FAILURE):
+            return {
+                ...state,
+                overlay: false,
+                pokeError: action.data.msg
+            }
         case (types.RECEIVED_SORTED_POKES_SUCCESS):
             return {
                 ...state,
@@ -92,7 +137,6 @@ function pokeDexReducer(state = defaultState, action) {
                 pokeError: action.data.msg
             }
         case (types.RECEIVED_ALL_POKES_SUCCESS):
-            console.log(action)
             return {
                 ...state,
                 allPokes: action.data,
