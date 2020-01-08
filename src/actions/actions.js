@@ -35,7 +35,7 @@ export function handleGenChange(filters) {
 export function handleTypeChange(filters) {
   return (dispatch, getState) => { 
     // change type filter
-    dispatch({ type: types.CHANGE_POKE_TYPE, data: {type: filters.defaultType, rpp: filters.defaultRPP} })
+    dispatch({ type: types.CHANGE_POKE_TYPE, data: filters.defaultType })
 
     // get selected type info
     getTypePokemon(dispatch, getState, filters)
@@ -69,15 +69,15 @@ export function handleRPPChange(filters) {
 }
 
 // load more poke
-export function morePoke(filters) {
-  return (dispatch, getState) => {
-    // fetchMorePokeAjaxCall(defaultType, defaultSort, pages, dispatch)
-    dispatch({ type:types.REQUEST_RPP_CHANGE, data: filters.defaultRPP  })
+// export function morePoke(filters) {
+//   return (dispatch, getState) => {
+//     // fetchMorePokeAjaxCall(defaultType, defaultSort, pages, dispatch)
+//     dispatch({ type:types.REQUEST_RPP_CHANGE, data: filters.defaultRPP  })
     
-    // get more results
-    getTypePokemon(dispatch, getState, filters)
-  }
-}
+//     // get more results
+//     getTypePokemon(dispatch, getState, filters)
+//   }
+// }
 
 // get selected pokemon
 export function selectedPoke(poke) {

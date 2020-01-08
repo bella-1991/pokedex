@@ -10,7 +10,7 @@ class MorePokes extends Component {
         const { filters } = this.props
         
         filters.defaultRPP = filters.defaultRPP + 10
-        this.props.dispatch(actions.morePoke(filters))
+        // this.props.dispatch(actions.morePoke(filters))
     }
     
     render () {

@@ -16,7 +16,6 @@ class PokeFilters extends Component {
         const { filters } = this.props
 
         filters.defaultType = type.toString().toLowerCase()
-        filters.defaultRPP = 10
         this.props.dispatch(actions.handleTypeChange(filters))
     }
 
@@ -69,14 +68,14 @@ class PokeFilters extends Component {
                         )}
                     </select>
                 </div>
-                {/* <div className="pokedex__grid-filter-container">
+                <div className="pokedex__grid-filter-container">
                     <label className="pokedex__grid-label">Show Results</label>
                     <select value={filters.defaultRPP} onChange={e => this.handleRPPChange(e.target.value)} className="pokedex__grid-select">
                         {filterOptions.resultsPerPage.map((option, key) => (
                             <option key={key} value={option.value}>{option.value}</option>
                         ))}
                     </select>
-                </div> */}
+                </div>
             </div>
         )
     }

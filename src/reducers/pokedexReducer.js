@@ -195,7 +195,7 @@ function pokeDexReducer(state = defaultState, action) {
         case (types.CHANGE_POKE_TYPE):
             return {
                 ...state,
-                filters: {...state.filters, defaultType: action.data.type, defaultRPP: action.data.rpp },
+                filters: {...state.filters, defaultType: action.data },
             }
         case (types.RECEIVED_POKE_TYPES_FAILURE):
             return {
