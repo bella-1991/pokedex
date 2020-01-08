@@ -1,10 +1,9 @@
-import React, { Component } from 'react' 
+import React from 'react' 
 
 const pokeProgressBar = props => {
     return (
         <div className="pokedex__details-stats">
-            {
-                props.stats.map((stats, index) => 
+            { props.stats.map((stats, index) => (
                     <div className="pokedex__details-stat" key={index}>
                         <label className="pokedex__details-stat-label">{stats.stat.name}</label>
                         <div className="pokedex__details-progressbar-container">
@@ -14,7 +13,7 @@ const pokeProgressBar = props => {
                         </div>
                     </div>
                 )
-            }
+            )}
         </div>
     )
 }

@@ -1,4 +1,4 @@
-import React, { Component } from 'react' 
+import React from 'react' 
 
 const pokeKeyFacts = props => {
     return (
@@ -9,16 +9,13 @@ const pokeKeyFacts = props => {
             </div>
             <div className="pokedex__detials-key-fact">
                 <label className="pokedex__details-label">Type(s): </label>
-                { 
-                    props.types.map((types, index) => 
-                    <span className="pokedex__details-info" key={index}>
-                        {types.type.name}
-                        {
-                            props.types.length !== (index+1) ? " / " : null
-                        }                                
-                    </span>
+                { props.types.map((types, index) => (
+                        <span className="pokedex__details-info" key={index}>
+                            {types.type.name}
+                            { props.types.length !== (index+1) ? " / " : null }                                
+                        </span>
                     )
-                }
+                )}
             </div>
             <div className="pokedex__detials-key-fact">
                 <label className="pokedex__details-label">Height: </label>

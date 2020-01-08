@@ -1,6 +1,9 @@
-.pokedex__grid-container { display: flex; flex-wrap: wrap; padding: 0 20px; width: 100%; }
+.pokedex__grid-container { display: flex; flex-wrap: wrap; padding: 20px; width: 100%; }
 
-.pokedex__grid-item { display: flex; position: relative; flex-direction: column; width: calc(100% / 5 - 10px); background: #fff; box-shadow: 0 0 8px 0 rgba(0,0,0,0.15); margin: 0 10px 10px 0; padding: 10px; cursor: pointer; }
+.pokedex__grid-results-label { text-align: left; padding: 0 20px; font-size: 12px; }
+
+.pokedex__grid-item { display: flex; position: relative; flex-direction: column; width: calc(100% / 5 - 10px); background: #fff; box-shadow: 0 0 8px 0 rgba(0,0,0,0.15); margin: 0 10px 10px 0; padding: 10px; cursor: pointer;  opacity: 1; visibility: visible; transition: all ease-in-out 5s; min-height: 130px; }
+.pokedex__grid-item img { opacity: 1; visibility: visible; transition: all ease-in-out 5s; }
 
 .pokedex__grid-item:nth-child(5n) { margin-right: 0; }
 

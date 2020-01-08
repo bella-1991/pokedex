@@ -5,30 +5,22 @@ import * as actions from '../../actions/actions'
 import './poke-grid.css'
 
 class PokeGrid extends Component {
-    componentWillMount() {
-        // const { defaultType, defaultSort, pages } = this.props,
-        //     data = {
-        //         defaultType: defaultType,
-        //         defaultSort: defaultSort,
-        //         pages: pages
-        //     }
-
-        this.props.dispatch(actions.getAllPokes())
-    }
-
     selectedPoke = selectedPoke => this.props.dispatch(actions.selectedPoke(selectedPoke))
 
     getSpriteId = url => {
-        return `../sprites/${url.split('pokemon/').pop().split('/')[0]}.png`
+        return `../sprites/${url.split('pokemon-species/').pop().split('/')[0]}.png`
     }
 
     render () {
-        const { sprites } = this.props
+        const { results } = this.props
 
         return (
             <div className="pokedex__grid"> 
+                <p className="pokedex__grid-results-label">
+                    { results.filteredResults && `- Showing ${results.filteredResults.length} out of ${results.numberOfResults} Results -` }
+                </p>
                 <div className="pokedex__grid-container">
-                    {/* { sprites.map((sprite, index) => (
+                    { results.filteredResults && results.filteredResults.map((sprite, index) => (
                             <div className="pokedex__grid-item" key={index} onClick={() => this.selectedPoke(sprite.name)}>
                                 <img src={this.getSpriteId(sprite.url)} alt={sprite.name} />
                                 <span className="pokedex__grid-title">{sprite.name}</span>  
@@ -37,7 +29,7 @@ class PokeGrid extends Component {
                                 </div>              
                             </div>
                         )
-                    )} */}
+                    )}
                 </div>
             </div>
         )
@@ -46,9 +38,6 @@ class PokeGrid extends Component {
 
 export default connect((state, props) => {
     return {
-        // defaultType: state.pokedexReducer.defaultType,
-        // defaultSort: state.pokedexReducer.defaultSort,
-        sprites: state.pokedexReducer.results.allPokes,
-        // pages: state.pokedexReducer.pages,
+        results: state.pokedexReducer.results,
     }
 })(PokeGrid)

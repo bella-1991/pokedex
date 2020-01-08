@@ -11,22 +11,23 @@ import PokeOverlay from './pokeOverlay/pokeOverlay'
 import './main.css'
 
 class Main extends Component {
-    
+    componentDidMount() {
+        this.props.dispatch(actions.initialisePokedex())
+    }
 
     render() {
-        const { sprites, selectedPoke, overlay, morePokes, pokeError } = this.props
+        const { selectedPoke, overlay, morePokes, pokeError } = this.props
 
         return (    
             <div className="pokedex">
                 <PokeHeader />
                 { selectedPoke ? (
                         <PokeDetails />   
-                ):(   
-                    <>
+                ):( <>
                         <PokeFilter />
                         {!pokeError ? (
                             <>
-                                <PokeGrid sprites={sprites} />
+                                <PokeGrid />
                                 { morePokes && <MorePokes /> }  
                             </>
                         ):(

@@ -18,8 +18,9 @@ export const URLS = {
 export const DefaultFilters = {
     GEN: 'generation-i',
     TYPE: 'all',
-    SORT: 'ASCE',
-    RPP: 10
+    SORT: 'REL',
+    RPP: 10,
+    PAGE: 1
 }
 
 /*

@@ -1,17 +1,17 @@
 import axios from 'axios'
 
-import { URLS as urls, ActionTypes as types, Labels as errorLabels, DefaultFilters as dafaultValues } from '../constants'
+import { URLS as urls, ActionTypes as types, Labels as errorLabels, DefaultFilters as defaultValues } from '../constants'
 
 /* 
  * get filters populated
  */
-export function getFilterOptions() {
+export function initialisePokedex() {
   return(dispatch, getState) => {    
     // get all Poke Generations
     getAllGenerations(dispatch)
 
     // get default generation info
-    getAllGenerations(dispatch, getState().pokedexReducer.filters.defaultGeneration)
+    getAllGenerations(dispatch, getState().pokedexReducer.filters)
 
   }
 }
@@ -19,86 +19,65 @@ export function getFilterOptions() {
 /*
  * poke generation category changed
  */
-export function handleGenChange(gen) {
+export function handleGenChange(filters) {
   return (dispatch, getState) => { 
     // change gen filter
-    dispatch({ type: types.CHANGE_GEN_TYPE, data: gen })
+    dispatch({ type: types.CHANGE_GEN_TYPE, data: filters.defaultGeneration })
     
     // get selected generation info
-    getAllGenerations(dispatch, getState().pokedexReducer.filters.defaultGeneration)
+    getAllGenerations(dispatch, filters)
   }
 }
 
 /*
  * poke type category changed
  */
-export function handleTypeChange(type) {
+export function handleTypeChange(filters) {
   return (dispatch, getState) => { 
-    dispatch({ type: types.CHANGE_POKE_TYPE, data: type })
-    getTypePokemon(dispatch, type)
-    // fetchAllPokes(data, dispatch)
+    // change type filter
+    dispatch({ type: types.CHANGE_POKE_TYPE, data: {type: filters.defaultType, rpp: filters.defaultRPP} })
+
+    // get selected type info
+    getTypePokemon(dispatch, getState, filters)
   }
 }
 
 /*
  * poke sort order changed
  */
-export function handleSortChange(sort) {
-  return (dispatch) => {
-    dispatch({ type: types.REQUEST_SORT_TYPE_CHANGE, data: sort })
-    // fetchAllPokes(data, dispatch)
+export function handleSortChange(filters) {
+  return (dispatch, getState) => {
+    // change sort category
+    dispatch({ type: types.REQUEST_SORT_TYPE_CHANGE, data: filters.defaultSort })
+    
+    // get selected sort info
+    getTypePokemon(dispatch, getState, filters)
   }
 }
 
 /*
  * poke results/page changed
  */
-export function handleRPPChange(rpp) {
-  return (dispatch) => {
-    dispatch({ type: types.REQUEST_RPP_CHANGE, data: rpp })
-    // fetchAllPokes(data, dispatch)
-  }
-}
-
-/*
- * get all pokemon filterd and sorted 
- */
-export function getAllPokes() {
+export function handleRPPChange(filters) {
   return (dispatch, getState) => {
-    
-    const stateData = getState().pokedexReducer,
-          allPokes = stateData.allPokes,
-          filters = stateData.filters, 
-          typePokes = getTypePokemon(dispatch, filters.defaultType),
-          sortedPokes = getFilteredResults(allPokes, filters, typePokes)
-    
-    console.log(sortedPokes)
-    // fetchAllPokes1(params, dispatch)
+    // change results per page
+    dispatch({ type: types.REQUEST_RPP_CHANGE, data: filters.defaultRPP })
+
+    // get selected results per page
+    getTypePokemon(dispatch, getState, filters)
   }
 }
 
-// // get all pokemon sorted and filtered
-// export function getAllPokes(params) {
-//   return (dispatch, getState) => {
-//     fetchAllPokes(params, dispatch)
-//   }
-// }
-
-// // poke type category changed
-// export function handleTypeChange(data) {
-//   return (dispatch, getState) => { 
-//     dispatch({ type: types.CHANGE_POKE_TYPE, data: data.defaultType })
-//     fetchAllPokes(data, dispatch)
-//   }
-// }
-
-// // poke sort order changed
-// export function handleSortChange(data) {
-//   return (dispatch) => {
-//     dispatch({ type: types.REQUEST_SORT_TYPE_CHANGE, data: data.defaultSort })
-//     fetchAllPokes(data, dispatch)
-//   }
-// }
+// load more poke
+export function morePoke(filters) {
+  return (dispatch, getState) => {
+    // fetchMorePokeAjaxCall(defaultType, defaultSort, pages, dispatch)
+    dispatch({ type:types.REQUEST_RPP_CHANGE, data: filters.defaultRPP  })
+    
+    // get more results
+    getTypePokemon(dispatch, getState, filters)
+  }
+}
 
 // get selected pokemon
 export function selectedPoke(poke) {
@@ -114,67 +93,26 @@ export function clearPoke() {
   }
 }
 
-// load more poke
-export function morePoke(data) {
-  return (dispatch) => {
-    // fetchMorePokeAjaxCall(defaultType, defaultSort, pages, dispatch)
-    dispatch({ type:types.REQUEST_SORT_TYPE_CHANGE, data: data.pages  })
-    // fetchAllPokes(data, dispatch)
-  }
-}
-
-
-// function getTypeAndSortedPokes(options, allPokes, AllTypePokes) {
-//   let typePokes, sortedPokes
-
-//   // filter according to type
-//   if (options.defaultType === 'ALL') {
-//     typePokes = allPokes
-//   } else { 
-//     typePokes =  allPokes.filter(allPoke => {
-//       return AllTypePokes.find(typePoke => {
-//         if (allPoke.name === typePoke.pokemon.name)
-//         {
-//           return allPoke
-//         }
-//       })
-//     })
-//   }
-
-//   // sorted according to order
-//   switch(options.defaultSort) {
-//     case 'ASCE':
-//         sortedPokes = typePokes.sort((a, b) => a.name.localeCompare(b.name))
-//         break;
-//     case 'DESC':
-//         sortedPokes = typePokes.sort((a, b) => a.name.localeCompare(b.name)).reverse()
-//         break;
-//     default:
-//         return
-//   }
-
-//   return sortedPokes
-// }
-
-function getFilteredResults(allPokes, filters, allTypePokes) {
-  let typePokes, sortedPokes
+function getFilteredResults(filters, allPokes, allTypePokes) {
+  let typePokes, sortedPokes, filteredResults, results
 
   // filter according to type
-  if (filters.defaultType === 'ALL') {
+  if (filters.defaultType === defaultValues.TYPE) {
     typePokes = allPokes
   } else { 
-    typePokes =  allPokes.filter(allPoke => {
+    typePokes =  allPokes.filter(eachPoke => {
       return allTypePokes.find(typePoke => {
-        if (allPoke.name === typePoke.pokemon.name)
-        {
-          return allPoke
-        }
+        if (eachPoke.name === typePoke.pokemon.name)
+          return eachPoke
       })
     })
   }
 
   // sorted according to order
   switch(filters.defaultSort) {
+    case 'REL':
+        sortedPokes = typePokes.reverse()
+        break;
     case 'ASCE':
         sortedPokes = typePokes.sort((a, b) => a.name.localeCompare(b.name))
         break;
@@ -182,60 +120,29 @@ function getFilteredResults(allPokes, filters, allTypePokes) {
         sortedPokes = typePokes.sort((a, b) => a.name.localeCompare(b.name)).reverse()
         break;
     default:
-        return
+        return 
   }
 
-  return sortedPokes
+  filteredResults = filterByResultPerPage(sortedPokes, filters.defaultRPP);
+
+  results = {
+    allPokes: allPokes,
+    numberOfResults: sortedPokes.length,
+    filteredResults: filteredResults,
+    pages: ((allPokes.length) / filters.defaultRPP).toFixed(),
+    page: filters.defaultPage
+  }
+
+  return results
 }
 
-// function fetchAllPokesAjaxCall (defaultType, defaultSort, dispatch) {
-//   dispatch({ type:types.REQUEST_ALL_POKES })
+function filterByResultPerPage(sortedPokes, rpp) {
+  return sortedPokes.slice(0, rpp);
+}
 
-//   // get all pokes
-//   axios.get('https://pokeapi.co/api/v2/pokemon?limit=10&offset=0')
-//   .then((resp) => {
-//     const respResults = resp.data.results
-//     let typePokes
-
-//     if (defaultType === 'ALL') {
-//       typePokes = respResults
-
-//       const sortedPokes = getTypeAndSortedPokes(defaultSort, typePokes, typePokes)
-//       dispatch({ type:types.RECEIVED_ALL_POKES_SUCCESS, data: sortedPokes })
-//     } else { 
-
-//       axios.get(`https://pokeapi.co/api/v2/type/${defaultType}`)
-//       .then((res) => {
-//         typePokes = res.data.pokemon
-        
-//         const sortedPokes = getTypeAndSortedPokes(defaultSort, respResults, typePokes)
-//         console.log(sortedPokes.length)
-        
-//         sortedPokes.length ? dispatch({ type:types.RECEIVED_SORTED_POKES_SUCCESS, data: sortedPokes }) : dispatch({ type:types.NO_SORTED_POKES_FOUD, data: {msg: 'No Pokes found. Please try again'} })
-//       })
-//       .catch((resp) => {
-//         dispatch({ type: types.RECEIVED_SORTED_POKES_FAILURE, data: {msg: types.COULD_NOT_GET_POKES, failedCall: 'fetch sorted pokes'} })
-//       })
-//     }
-//   })
-//   .catch((resp) => {
-//     dispatch({ type: types.RECEIVED_ALL_POKES_FAILURE, data: {msg: types.COULD_NOT_GET_POKES, failedCall: 'fetch pokes'} })
-//   })
-// }
-
-// function fetchPokeTypesAjaxCall (dispatch) {
-//   dispatch({type:types.REQUEST_POKE_TYPES})
-
-//   axios.get('https://pokeapi.co/api/v2/type')
-//   .then((resp) => {
-//     dispatch({ type: types.RECEIVED_POKE_TYPES_SUCCESS, data: resp.data.results })
-//   })
-//   .catch((resp) => {
-//     const msg = types.COULD_NOT_GET_POKE_TYPES
-//     dispatch({ type: types.RECEIVED_POKE_TYPES_FAILURE, data: {msg: msg, failedCall: 'fetch poke types'} })
-//   })
-// }
-
+/*
+ * get selected poke details
+ */
 function fetchSelectedPokeAjaxCall (poke, dispatch) {
   dispatch({ type: types.REQUEST_SELECTED_POKE })
 
@@ -246,117 +153,52 @@ function fetchSelectedPokeAjaxCall (poke, dispatch) {
   })
 }
 
-// function fetchMorePokeAjaxCall (defaultType, defaultSort, pages, dispatch) {
-//   const newPage = pages + 1
-//   dispatch({ type:types.REQUEST_MORE_POKES, data: newPage  })
-
-//   // get all pokes
-//   axios.get(`https://pokeapi.co/api/v2/pokemon?limit=10&offset=${newPage*10}`)
-//   .then((resp) => {
-//     const respResults = resp.data.results
-//     let typePokes
-
-//     if (defaultType === 'ALL') {
-//       typePokes = respResults
-
-//       const sortedPokes = getTypeAndSortedPokes(defaultSort, typePokes, typePokes)
-//       dispatch({ type:types.RECEIVED_MORE_POKES_SUCCESS, data: sortedPokes })
-//     } else { 
-
-//       axios.get(`https://pokeapi.co/api/v2/type/${defaultType}`)
-//       .then((res) => {
-//         typePokes = res.data.pokemon
-
-//         const sortedPokes = getTypeAndSortedPokes(defaultSort, respResults, typePokes)
-//         dispatch({ type:types.RECEIVED_MORE_SORTED_POKES_SUCCESS, data: sortedPokes })
-//       })
-//       .catch((resp) => {
-//         const msg = types.COULD_NOT_GET_POKES
-//         dispatch({ type: types.RECEIVED_MORE_SORTED_POKES_FAILURE, data: {msg: msg, failedCall: 'fetch sorted pokes'} })
-//       })
-//     }
-//   })
-//   .catch((resp) => {
-//     const msg = types.COULD_NOT_GET_POKES
-//     dispatch({ type: types.RECEIVED_MORE_POKES_FAILURE, data: {msg: msg, failedCall: 'fetch pokes'} })
-//   })
-// }
-
-// function fetchAllPokes (options, dispatch) {
-//   console.log(options)
-//   dispatch({ type:types.REQUEST_ALL_POKES })
-
-//   // call for all pokes
-//   fetchAllPokesAjaxCall(options.pages).then(allPokesData => {
-//     dispatch({type:types.REQUEST_POKE_TYPES})
-    
-//     // call for all poke types
-//     fetchPokeTypesAjaxCall(options.defaultType).then(allPokeTypesData => {  
-
-//       const allTypes = allPokeTypesData.data.results ? allPokeTypesData.data.results : allPokeTypesData.data.pokemon,
-//             sortedPokes = getTypeAndSortedPokes(options, allPokesData.data.results, allTypes)
-
-//       dispatch({ type: types.RECEIVED_POKE_TYPES_SUCCESS, data: allTypes })
-//       dispatch({ type:types.RECEIVED_ALL_POKES_SUCCESS, data: sortedPokes })
-//     })
-//     .catch(allPokeTypesError => {
-//       dispatch({ type: types.RECEIVED_POKE_TYPES_FAILURE, data: {msg: errorLabels.COULD_NOT_GET_POKE_TYPES} })
-//     })
-//   }).catch(allPokesError => {
-//     dispatch({ type: types.RECEIVED_ALL_POKES_FAILURE, data: {msg: errorLabels.COULD_NOT_GET_POKES } })
-//   })
-// }
-
 /*
  * get Poke Generations & information
  */
-function getAllGenerations(dispatch, generation) {
+function getAllGenerations(dispatch, filters) {
   dispatch({ type: types.REQUEST_POKE_GENERATIONS })
 
-  fetchPokeGenerations(generation).then(data => {
-    generation ? (dispatch({ type: types.RECEIVED_EACH_POKE_GENERATION_SUCCESS, data: {pokemon: data.data.pokemon_species, types: data.data.types} })
-    ):( dispatch({ type: types.RECEIVED_POKE_GENERATIONS_SUCCESS, data: data.data.results }) )
-  }).catch(err => {
-    generation ? ( dispatch({ type: types.RECEIVED_EACH_POKE_GENERATION_FAILURE, data: {msg: errorLabels.COULD_NOT_GET_EACH_POKE_GENERATION} }) 
-    ):( dispatch({ type: types.RECEIVED_POKE_GENERATIONS_FAILURE, data: {msg: errorLabels.COULD_NOT_GET_POKE_GENERATIONS} }) )
-  })
+  if (typeof filters !== 'undefined') {
+    fetchPokeGenerations(filters.defaultGeneration).then(data => {
+        const allPokemon = data.data.pokemon_species,
+              allPokemonTypes = data.data.types,
+              sortedPokes = getFilteredResults(filters, allPokemon, allPokemonTypes);
+  
+        dispatch({ type: types.RECEIVED_EACH_POKE_GENERATION_SUCCESS, data: {pokemon: allPokemon, types: allPokemonTypes} })
+        dispatch({ type:types.RECEIVED_SORTED_POKES_SUCCESS, data: sortedPokes })
+    }).catch(err => {
+      dispatch({ type: types.RECEIVED_EACH_POKE_GENERATION_FAILURE, data: {msg: errorLabels.COULD_NOT_GET_EACH_POKE_GENERATION} }) 
+    })
+  } else {
+    fetchPokeGenerations().then(data => {      
+        dispatch({ type: types.RECEIVED_POKE_GENERATIONS_SUCCESS, data: data.data.results }) 
+    }).catch(err => {
+       dispatch({ type: types.RECEIVED_POKE_GENERATIONS_FAILURE, data: {msg: errorLabels.COULD_NOT_GET_POKE_GENERATIONS} }) 
+    })
+  }
 }
 
 /* 
  * get all pokes of selected type
  */
-function getTypePokemon(dispatch, type) {
+function getTypePokemon(dispatch, getState, filters) {
   dispatch({type:types.REQUEST_POKE_TYPES})
 
-  fetchPokeTypesAjaxCall(type).then(data => {  
-    const allPokeOfTypes = data.data.pokemon ? data.data.pokemon : null
-
+  fetchPokeTypesAjaxCall(filters.defaultType).then(data => {  
+    const allTypes = data.data.results ? data.data.results : data.data.pokemon,
+          sortedPokes = getFilteredResults(filters, getState().pokedexReducer.results.allPokes, allTypes)
     
-    console.log(allPokeOfTypes)
-
-    // const allTypes = data.data.results ? data.data.results : data.data.pokemon,
-    //       sortedPokes = getTypeAndSortedPokes(options, allPokesData.data.results, allTypes)
-
-    // dispatch({ type: types.RECEIVED_POKE_TYPES_SUCCESS, data: data })
-    // dispatch({ type:types.RECEIVED_ALL_POKES_SUCCESS, data: sortedPokes })
+    dispatch({ type:types.RECEIVED_SORTED_POKES_SUCCESS, data: sortedPokes })
   })
-  .catch(allPokeTypesError => {
+  .catch(err => {
     dispatch({ type: types.RECEIVED_POKE_TYPES_FAILURE, data: {msg: errorLabels.COULD_NOT_GET_POKE_TYPES} })
   })
 }
 
 function fetchPokeGenerations(generation) {
   // get all poke generations
-  return axios.get(urls.POKE_GENERATIONS + (generation ? generation : '')).then(resp => {
-    return resp
-  }).catch(err => {
-    return err
-  })
-}
-
-function fetchAllPokesAjaxCall(pages) {
-  // get all pokes
-  return axios.get(`${urls.ALL_POKEMON}?limit=${urls.POKE_LIMIT}`).then(resp => {
+  return axios.get(urls.POKE_GENERATIONS + (typeof generation !== 'undefined' ? generation : '')).then(resp => {
     return resp
   }).catch(err => {
     return err
@@ -364,9 +206,8 @@ function fetchAllPokesAjaxCall(pages) {
 }
 
 function fetchPokeTypesAjaxCall(type) {
-  // if type
   // get all poke types
-  return axios.get(urls.POKE_TYPES + (type !== dafaultValues.TYPE ? type : '')).then(resp => {
+  return axios.get(urls.POKE_TYPES + (type !== defaultValues.TYPE ? type : '')).then(resp => {
     return resp
   }).catch(err => {
     return err      

@@ -1,4 +1,4 @@
-import { ActionTypes as types, DefaultFilters as dafaultValues } from '../constants';
+import { ActionTypes as types, DefaultFilters as defaultValues } from '../constants';
 
 var defaultState = {
     allPokes: [],
@@ -46,10 +46,11 @@ var defaultState = {
         }]
     }, 
     filters: {
-        defaultGeneration: dafaultValues.GEN,
-        defaultType: dafaultValues.TYPE,
-        defaultSort: dafaultValues.SORT,
-        defaultRPP: dafaultValues.RPP
+        defaultGeneration: defaultValues.GEN,
+        defaultType: defaultValues.TYPE,
+        defaultSort: defaultValues.SORT,
+        defaultRPP: defaultValues.RPP,
+        defaultPage: defaultValues.PAGE
     },
     results: {
         allPokes: []
@@ -79,7 +80,7 @@ function pokeDexReducer(state = defaultState, action) {
         case (types.RECEIVED_EACH_POKE_GENERATION_SUCCESS):
             return {
                 ...state,
-                allPokes: action.data.pokemon,
+                // allPokes: action.data.pokemon,
                 filterOptions: {...state.filterOptions, types: action.data.types},
                 pokeError: '',
                 overlay: false,
@@ -150,9 +151,11 @@ function pokeDexReducer(state = defaultState, action) {
                 pokeError: action.data.msg
             }
         case (types.RECEIVED_SORTED_POKES_SUCCESS):
+            console.log(action.data)
             return {
                 ...state,
-                allPokes: action.data,
+                // allPokes: action.data.allPokes,
+                results: action.data,
                 overlay: false,
                 pokeError: ''
             }
@@ -186,13 +189,13 @@ function pokeDexReducer(state = defaultState, action) {
         case (types.REQUEST_SORT_TYPE_CHANGE):
             return {
                 ...state,
-                defaultSort: action.data,
+                filters: {...state.filters, defaultSort: action.data},
                 overlay: true
             }
         case (types.CHANGE_POKE_TYPE):
             return {
                 ...state,
-                filters: {...state.filters, defaultType: action.data},
+                filters: {...state.filters, defaultType: action.data.type, defaultRPP: action.data.rpp },
             }
         case (types.RECEIVED_POKE_TYPES_FAILURE):
             return {
@@ -221,7 +224,7 @@ function pokeDexReducer(state = defaultState, action) {
         case (types.RECEIVED_ALL_POKES_SUCCESS):
             return {
                 ...state,
-                allPokes: action.data,
+                // allPokes: action.data,
                 overlay: false,
                 pokeError: ''
             }
