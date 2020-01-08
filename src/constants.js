@@ -5,9 +5,21 @@ import keyMirror from 'keymirror'
  */
 
 export const URLS = {
+    POKE_GENERATIONS: 'https://pokeapi.co/api/v2/generation/',
     ALL_POKEMON: 'https://pokeapi.co/api/v2/pokemon',
-    POKE_LIMIT: 10,
+    POKE_LIMIT: 151,
     POKE_TYPES: 'https://pokeapi.co/api/v2/type/'
+}
+
+/*
+ * Defaults
+ */
+
+export const DefaultFilters = {
+    GEN: 'generation-i',
+    TYPE: 'all',
+    SORT: 'ASCE',
+    RPP: 10
 }
 
 /*
@@ -32,13 +44,22 @@ export const ActionTypes = keyMirror({
     RECEIVED_MORE_POKES_FAILURE: null,
     RECEIVED_MORE_SORTED_POKES_SUCCESS: null,
     RECEIVED_MORE_SORTED_POKES_FAILURE: null,
-    NO_SORTED_POKES_FOUD: null
+    NO_SORTED_POKES_FOUD: null,
+    REQUEST_POKE_GENERATIONS: null,
+    RECEIVED_POKE_GENERATIONS_SUCCESS: null,
+    RECEIVED_POKE_GENERATIONS_FAILURE: null,
+    REQUEST_EACH_POKE_GENERATION: null,
+    RECEIVED_EACH_POKE_GENERATION_SUCCESS: null,
+    RECEIVED_EACH_POKE_GENERATION_FAILURE: null,
+    CHANGE_GEN_TYPE: null,
+    REQUEST_RPP_CHANGE: null,
 })
 
 /*
  * Errors
  */
 export const Labels = {
+    COULD_NOT_GET_POKE_GENERATIONS: 'Could not get Poke generations. Please try again',
     NO_POKES_FOUND: 'No Pokes found. Please try again',
     COULD_NOT_GET_POKES: "Could not find any Pokes. Please try again",    
     COULD_NOT_GET_SELECTED_POKE: 'Could not get selected poke details. Please try again',

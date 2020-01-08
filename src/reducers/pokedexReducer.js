@@ -1,12 +1,12 @@
-import { ActionTypes as types } from '../constants';
+import { ActionTypes as types, DefaultFilters as dafaultValues } from '../constants';
 
 var defaultState = {
     allPokes: [],
-    pokeTypes: [],
+    pokeOfType: [],
     selectedPoke: null,
     overlay: false,
-    defaultSort: 'ASCE',
-    defaultType: 'ALL',
+    // defaultSort: 'ASCE',
+    // defaultType: 'ALL',
     sortOptions: [
         {
             code: 'ASCE',
@@ -20,12 +20,94 @@ var defaultState = {
     pages: 1,
     morePokes: [],
     pokeError: '',
+    filterOptions: {
+        generations: [],
+        types: [],
+        sort: [{
+            code: 'REL',
+            value: 'Most Relavant'
+        },{
+            code: 'ASCE',
+            value: 'Ascending'
+        },{
+            code: 'DESC',
+            value: 'Descending'
+        }],
+        resultsPerPage: [{
+            value: 'ALL'
+        },{
+            value: 10
+        },{
+            value: 20
+        },{ 
+            value: 50
+        }, {
+            value: 100
+        }]
+    }, 
+    filters: {
+        defaultGeneration: dafaultValues.GEN,
+        defaultType: dafaultValues.TYPE,
+        defaultSort: dafaultValues.SORT,
+        defaultRPP: dafaultValues.RPP
+    },
+    results: {
+        allPokes: []
+    }
 };
 
 function pokeDexReducer(state = defaultState, action) {
     switch (action.type) {
+        case (types.REQUEST_RPP_CHANGE):
+            return {
+                ...state,
+                filters: {...state.filters, defaultRPP: action.data},
+                // overlay: true
+            }
+        case (types.CHANGE_GEN_TYPE):
+            return {
+                ...state,
+                filters: {...state.filters, defaultGeneration: action.data},
+                overlay: true
+            }
+        case (types.RECEIVED_EACH_POKE_GENERATION_FAILURE):
+            return {
+                ...state,
+                pokeError: action.data.msg,
+                overlay: false,
+            }
+        case (types.RECEIVED_EACH_POKE_GENERATION_SUCCESS):
+            return {
+                ...state,
+                allPokes: action.data.pokemon,
+                filterOptions: {...state.filterOptions, types: action.data.types},
+                pokeError: '',
+                overlay: false,
+            }
+        case (types.REQUEST_EACH_POKE_GENERATION):
+            return {
+                ...state,
+                overlay: true,
+            }
+        case (types.RECEIVED_POKE_GENERATIONS_FAILURE):
+            return {
+                ...state,
+                pokeError: action.data.msg,
+                overlay: false,
+            }
+        case (types.RECEIVED_POKE_GENERATIONS_SUCCESS):
+            return {
+                ...state,
+                filterOptions: {...state.filterOptions, generations: action.data},
+                pokeError: '',
+                overlay: false,
+            }
+        case (types.REQUEST_POKE_GENERATIONS):
+            return {
+                ...state,
+                overlay: true,
+            }
         case (types.NO_SORTED_POKES_FOUD):
-            console.log(action.data)
             return {
                 ...state,
                 overlay: false,
@@ -110,7 +192,7 @@ function pokeDexReducer(state = defaultState, action) {
         case (types.CHANGE_POKE_TYPE):
             return {
                 ...state,
-                defaultType: action.data
+                filters: {...state.filters, defaultType: action.data},
             }
         case (types.RECEIVED_POKE_TYPES_FAILURE):
             return {
@@ -121,7 +203,7 @@ function pokeDexReducer(state = defaultState, action) {
         case (types.RECEIVED_POKE_TYPES_SUCCESS):
             return {
                 ...state,
-                pokeTypes: action.data,
+                pokeOfType: action.data,
                 overlay: false,
                 pokeError: ''
             }
