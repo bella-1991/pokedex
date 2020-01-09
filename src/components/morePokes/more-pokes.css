@@ -2,3 +2,5 @@
 
 .pokedex__more-button:hover,
 .pokedex__more-button:focus { background-color: #3cb6ce; color: #ffffff; }
+
+.pokedex__more-pokes { display: flex; justify-content: space-between; padding: 0 20px; }

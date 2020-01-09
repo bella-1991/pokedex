@@ -10,17 +10,20 @@ class MorePokes extends Component {
         const { filters } = this.props
         
         filters.defaultRPP = filters.defaultRPP + 10
-        // this.props.dispatch(actions.morePoke(filters))
     }
     
     render () {
-        const { currentResults, numberOfResults } = this.props
+        const { currentResults, numberOfResults, page, pages } = this.props
 
         return (
-            <div className="pokedex__more-pokes">                
-                { currentResults && currentResults.length !== numberOfResults ? (
+            <div className="pokedex__more-pokes">    
+                <button className="pokedex__more-button" onClick={this.morePoke} disabled={page === 1 ? true : false} >First</button>
+
+                <button className="pokedex__more-button" onClick={this.morePoke} disabled={page === pages? true : false}>Last</button>
+                {/* { currentResults && currentResults.length !== numberOfResults ? (
                     <button className="pokedex__more-button" onClick={this.morePoke}>Load next set of Pokes</button>
-                ): null }                
+                ): null }             */}
+                    
             </div>
         )
     }
@@ -30,6 +33,8 @@ export default connect((state, props) => {
     return {
         filters: state.pokedexReducer.filters,
         currentResults: state.pokedexReducer.results.filteredResults,
-        numberOfResults: state.pokedexReducer.results.numberOfResults
+        numberOfResults: state.pokedexReducer.results.numberOfResults,
+        page: state.pokedexReducer.results.page,
+        pages: state.pokedexReducer.results.pages
     }
 })(MorePokes)

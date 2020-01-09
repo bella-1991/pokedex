@@ -39,6 +39,7 @@ export const ActionTypes = keyMirror({
     RECEIVED_SELECTED_POKE_SUCCESS: null,
     RECEIVED_SELECTED_POKE_FAILURE: null,
     CLEAR_POKE: null,
+    REQUEST_SORTED_POKES_SUCCESS: null,
     RECEIVED_SORTED_POKES_SUCCESS: null,
     REQUEST_MORE_POKES: null,
     RECEIVED_MORE_POKES_SUCCESS: null,
@@ -54,7 +55,8 @@ export const ActionTypes = keyMirror({
     RECEIVED_EACH_POKE_GENERATION_FAILURE: null,
     CHANGE_GEN_TYPE: null,
     REQUEST_RPP_CHANGE: null,
-    MODIFY_GEN_LIST: null,
+    ADD_TYPE_LIST: null,
+    REMOVE_TYPE_LIST: null
 })
 
 /*

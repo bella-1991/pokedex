@@ -12,7 +12,7 @@ class PokeGrid extends Component {
     }
 
     render () {
-        const { results } = this.props
+        const { results, overlay } = this.props
 
         return (
             <div className="pokedex__grid"> 
@@ -21,7 +21,7 @@ class PokeGrid extends Component {
                 </p>
                 <div className="pokedex__grid-container">
                     { results.filteredResults && results.filteredResults.map((sprite, index) => (
-                            <div className="pokedex__grid-item" key={index} onClick={() => this.selectedPoke(sprite.name)}>
+                            <div className={overlay ? "pokedex__grid-item" : "pokedex__grid-item pokedex__grid-item--show"} key={index} onClick={() => this.selectedPoke(sprite.name)}>
                                 <img src={this.getSpriteId(sprite.url)} alt={sprite.name} />
                                 <span className="pokedex__grid-title">{sprite.name}</span>  
                                 <div className="pokedex_grid-view-details">
@@ -39,5 +39,6 @@ class PokeGrid extends Component {
 export default connect((state, props) => {
     return {
         results: state.pokedexReducer.results,
+        overlay: state.pokedexReducer.overlay
     }
 })(PokeGrid)

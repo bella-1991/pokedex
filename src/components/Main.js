@@ -36,7 +36,7 @@ class Main extends Component {
                         
                     </>
                 )}    
-                { overlay && <PokeOverlay /> }
+                <PokeOverlay /> 
             </div>
         )
     }
@@ -48,6 +48,6 @@ export default connect((state, props) => {
         overlay: state.pokedexReducer.overlay,
         morePokes: state.pokedexReducer.morePokes,
         pokeError: state.pokedexReducer.pokeError,
-        pages: state.pokedexReducer.pages
+        pages: state.pokedexReducer.pages,
     }
 })(Main)

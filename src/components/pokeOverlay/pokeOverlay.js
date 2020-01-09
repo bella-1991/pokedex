@@ -1,16 +1,19 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
+
+import * as actions from '../../actions/actions'
 import './poke-overlay.css'
 
-export default class PokeOverlay extends Component {
+class PokeOverlay extends Component {
     clearPoke = _ => {
         this.props.clearPoke()
     }
 
     render () {
-        const props = this.props
+        const { overlay } = this.props
 
         return (
-            <div className="pokedex__overlay">
+            <div className={overlay ? "pokedex__overlay pokedex__overlay--show" : "pokedex__overlay"}>
                 {/* <div className="lds-ring"><div></div><div></div><div></div><div></div></div> */}
                 <svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" display="block">
                     <rect x="47" y="24" rx="3" ry="6" width="6" height="12" fill="#3cb6ce">
@@ -54,3 +57,9 @@ export default class PokeOverlay extends Component {
         )
     }
 }
+
+export default connect((state, props) => {
+    return {
+        overlay: state.pokedexReducer.overlay
+    }
+})(PokeOverlay)
