@@ -1,7 +1,20 @@
-.pokedex__grid-filter { display: flex; justify-content: space-between; padding: 20px 20px 40px; }
+.pokedex__filters { display: flex; flex-direction: column; padding: 20px 20px 40px; text-align: left; }
+.pokedex__filters-container { display: flex; justify-content: space-between; }
+.pokedex__filters-container--fullwidth { flex-direction: column; }
+.pokedex__filters-container--fullwidth .pokedex__grid-filter-container { align-items: flex-start; border-bottom: 2px solid #3cb6ce;}
 
-.pokedex__grid-filter-container { display: flex; flex-direction: column; align-items: flex-start; }
+.pokedex__grid-filter-container { display: flex; align-items: center; padding: 10px 0; }
 
-.pokedex__grid-label { margin: 0 0 10px; }
+.pokedex__grid-label { margin: 0 10px 0 0; }
+
+.pokedex__filters-checkbox-group { display: flex; flex-wrap: wrap; }
+
+.pokedex__filters-checkbox { position: relative; display: flex; align-items: center; margin: 0 15px 5px 0; text-transform: uppercase; }
+.pokedex__filters-checkbox-label { order: 2; }
+.pokedex__filters-checkbox-input { position: absolute; opacity: 0; }
+.pokedex__filters-checkbox-input:checked ~ .pokedex__filters-checkbox-checkmark { background-color: #2196F3; }
+.pokedex__filters-checkbox-checkmark { height: 25px; width: 25px; background-color: #eee; order: 1; margin: 0 5px 0 0; }
+.pokedex__filters-checkbox-checkmark::after { content: ""; position: absolute; display: none; left: 9px; top: 5px; width: 5px; height: 10px; border: solid white; border-width: 0 3px 3px 0; transform: rotate(45deg); }
+.pokedex__filters-checkbox-input:checked ~ .pokedex__filters-checkbox-checkmark::after { display: block; }
 
 .pokedex__grid-select { height: 30px; width: 150px; text-transform: uppercase; }

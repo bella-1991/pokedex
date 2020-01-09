@@ -54,6 +54,7 @@ export const ActionTypes = keyMirror({
     RECEIVED_EACH_POKE_GENERATION_FAILURE: null,
     CHANGE_GEN_TYPE: null,
     REQUEST_RPP_CHANGE: null,
+    MODIFY_GEN_LIST: null,
 })
 
 /*

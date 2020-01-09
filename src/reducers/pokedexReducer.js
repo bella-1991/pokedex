@@ -46,6 +46,7 @@ var defaultState = {
         }]
     }, 
     filters: {
+        tempGen: [],
         defaultGeneration: defaultValues.GEN,
         defaultType: defaultValues.TYPE,
         defaultSort: defaultValues.SORT,
@@ -59,11 +60,17 @@ var defaultState = {
 
 function pokeDexReducer(state = defaultState, action) {
     switch (action.type) {
+        case (types.MODIFY_GEN_LIST):
+            console.log(action.data)
+            return {
+                ...state,
+                filters: {...state.filters, tempGen: [...state.filters.tempGen, action.data] },
+            }
         case (types.REQUEST_RPP_CHANGE):
             return {
                 ...state,
                 filters: {...state.filters, defaultRPP: action.data},
-                // overlay: true
+                overlay: true
             }
         case (types.CHANGE_GEN_TYPE):
             return {

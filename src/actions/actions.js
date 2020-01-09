@@ -29,6 +29,13 @@ export function handleGenChange(filters) {
   }
 }
 
+export function addGenList(gen) {
+  return {
+    type: types.MODIFY_GEN_LIST,
+    data: gen
+  }
+}
+
 /*
  * poke type category changed
  */
