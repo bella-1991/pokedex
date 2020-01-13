@@ -5,7 +5,7 @@ import * as actions from '../../actions/actions'
 import './poke-grid.css'
 
 class PokeGrid extends Component {
-    selectedPoke = selectedPoke => this.props.dispatch(actions.selectedPoke(selectedPoke))
+    selectedPoke = selectedPoke=> this.props.dispatch(actions.selectedPoke(selectedPoke))
 
     getSpriteId = url => {
         return `../sprites/${url.split('pokemon-species/').pop().split('/')[0]}.png`

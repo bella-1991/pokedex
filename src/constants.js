@@ -57,7 +57,8 @@ export const ActionTypes = keyMirror({
     CHANGE_GEN_TYPE: null,
     REQUEST_RPP_CHANGE: null,
     ADD_TYPE_LIST: null,
-    REMOVE_TYPE_LIST: null
+    REMOVE_TYPE_LIST: null,
+    REQUEST_PAGE_CHANGE: null
 })
 
 /*

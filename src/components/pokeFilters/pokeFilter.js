@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
+import { DefaultFilters as defaultValues } from '../../constants'
 import * as actions from '../../actions/actions'
 import './poke-filter.css'
 
@@ -21,6 +22,7 @@ class PokeFilters extends Component {
             filters.defaultType.splice(filters.defaultType.indexOf(type), 1)
         )        
 
+        filters.defaultPage = defaultValues.PAGE
         this.props.dispatch(actions.handleTypeChange(filters))
     }
 
@@ -39,10 +41,10 @@ class PokeFilters extends Component {
     }
     
     handleRPPChange = type => {   
-        console.log(type)     
         const { filters } = this.props
         
         filters.defaultRPP = type
+        filters.defaultPage = defaultValues.PAGE
         this.props.dispatch(actions.handleRPPChange(filters))
     }
 

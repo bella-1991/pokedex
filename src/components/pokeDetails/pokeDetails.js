@@ -5,6 +5,7 @@ import PokeImage from './pokeImage'
 import PokeKeyFacts from './pokeKeyFacts'
 import PokeAbilities from './pokeAbilities'
 import PokeProgressBar from './pokeProgressBar'
+
 import './poke-details.css'
 
 class PokeDetails extends Component {
@@ -54,6 +55,5 @@ class PokeDetails extends Component {
 export default connect((state, props) => {
     return { 
         selectedPoke: state.pokedexReducer.selectedPoke,
-        results: state.pokedexReducer.results
     }
 })(PokeDetails)

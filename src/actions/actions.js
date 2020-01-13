@@ -81,6 +81,19 @@ export function handleRPPChange(filters) {
   }
 }
 
+/*
+* poke results/page changed
+*/
+export function handlePageChange(filters) {
+ return (dispatch, getState) => {
+   // change results per page
+   dispatch({ type: types.REQUEST_PAGE_CHANGE, data: filters.defaultPage })
+
+   // get selected results per page
+   getTypePokemon(dispatch, getState, filters)
+ }
+}
+
 // get selected pokemon
 export function selectedPoke(poke) {
   return (dispatch) => {
@@ -107,12 +120,12 @@ function getFilteredResults(filters, allPokes, allTypePokes) {
           return eachPoke
       })
     })
-  }  
+  }
 
   // sorted according to order
   switch(filters.defaultSort) {
     case 'REL':
-        sortedPokes = typePokes.reverse()
+        sortedPokes = typePokes
         break;
     case 'ASCE':
         sortedPokes = typePokes.sort((a, b) => a.name.localeCompare(b.name))
@@ -128,7 +141,7 @@ function getFilteredResults(filters, allPokes, allTypePokes) {
     filteredResults = sortedPokes
     pages = 1
   } else {
-    filteredResults = filterByResultPerPage(sortedPokes, filters.defaultRPP)
+    filteredResults = filterByResultPerPage(sortedPokes, filters.defaultPage, filters.defaultRPP)
     pages = ((sortedPokes.length + parseInt(filters.defaultRPP) - 1) / parseInt(filters.defaultRPP))
   }
 
@@ -143,8 +156,13 @@ function getFilteredResults(filters, allPokes, allTypePokes) {
   return results
 }
 
-function filterByResultPerPage(sortedPokes, rpp) {
-  return sortedPokes.slice(0, rpp);
+function filterByResultPerPage(sortedPokes, currentPage, rpp) {
+  const indexOfLast = currentPage * rpp,
+        indexOfFirst = indexOfLast - rpp,
+        currentList = sortedPokes.slice(indexOfFirst, indexOfLast)
+
+  return currentList
+  // return sortedPokes.slice(0, rpp);
 }
 
 /*
@@ -190,7 +208,6 @@ function getAllGenerations(dispatch, filters) {
  * get all pokes of selected type
  */
 function getTypePokemon(dispatch, getState, filters) {
-  console.log(filters)
   dispatch({type:types.REQUEST_POKE_TYPES})
 
   if (filters.defaultType.length) {

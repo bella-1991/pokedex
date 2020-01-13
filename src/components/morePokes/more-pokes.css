@@ -1,9 +1,0 @@
-.pokedex__more-button { color: #3cb6ce; border: 1px solid #3cb6ce; background-color: transparent; box-shadow: none; padding: 10px 20px; cursor: pointer; top: 0; left: 20px; border-radius: 4px; margin: 30px 0; }  
-
-.pokedex__more-button:hover,
-.pokedex__more-button:focus { background-color: #3cb6ce; color: #ffffff; }
-
-.pokedex__more-button:disabled:hover,
-.pokedex__more-button:disabled:focus { background-color: transparent; color: #3cb6ce; cursor: default; }
-
-.pokedex__more-pokes { display: flex; justify-content: space-between; padding: 0 20px; }

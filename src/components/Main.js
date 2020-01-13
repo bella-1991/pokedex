@@ -6,7 +6,7 @@ import PokeHeader from './pokeHeader/pokeHeader'
 import PokeFilter from './pokeFilters/pokeFilter'
 import PokeGrid from './pokeGrid/pokeGrid'
 import PokeDetails from './pokeDetails/pokeDetails'
-import MorePokes from './morePokes/morePokes'
+import PokePagination from './pokePagination/pokePagination'
 import PokeOverlay from './pokeOverlay/pokeOverlay'
 import './main.css'
 
@@ -28,7 +28,7 @@ class Main extends Component {
                         {!pokeError ? (
                             <>
                                 <PokeGrid />
-                                { morePokes && <MorePokes /> }  
+                                { morePokes && <PokePagination /> }  
                             </>
                         ):(
                                 <span>{pokeError}</span>
