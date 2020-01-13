@@ -38,7 +38,8 @@ class PokeFilters extends Component {
         this.props.dispatch(actions.handleSortChange(filters))
     }
     
-    handleRPPChange = type => {        
+    handleRPPChange = type => {   
+        console.log(type)     
         const { filters } = this.props
         
         filters.defaultRPP = type

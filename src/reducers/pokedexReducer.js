@@ -32,7 +32,7 @@ var defaultState = {
             value: 'Descending'
         }],
         resultsPerPage: [{
-            value: 'ALL'
+            value: defaultValues.ALL
         },{
             value: 10
         },{

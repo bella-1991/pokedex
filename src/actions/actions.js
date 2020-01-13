@@ -124,17 +124,19 @@ function getFilteredResults(filters, allPokes, allTypePokes) {
         return 
   }
 
-  filteredResults = filterByResultPerPage(sortedPokes, filters.defaultRPP);
-  pages = (allPokes.length / filters.defaultRPP).toFixed()
-
-  // pages = pages*filters.defaultRPP === allPokes.length ? pages : (pages + 1)
+  if (filters.defaultRPP === defaultValues.ALL) {
+    filteredResults = sortedPokes
+    pages = 1
+  } else {
+    filteredResults = filterByResultPerPage(sortedPokes, filters.defaultRPP)
+    pages = ((sortedPokes.length + parseInt(filters.defaultRPP) - 1) / parseInt(filters.defaultRPP))
+  }
 
   results = {
     allPokes: allPokes,
     numberOfResults: sortedPokes.length,
     filteredResults: filteredResults,
-    // pages: (allPokes.length / filters.defaultRPP).toFixed(),
-    pages: (pages*filters.defaultRPP === allPokes.length) ? pages : (parseInt(pages) + 1),
+    pages: Math.floor(pages),
     page: filters.defaultPage
   }
 
@@ -188,6 +190,7 @@ function getAllGenerations(dispatch, filters) {
  * get all pokes of selected type
  */
 function getTypePokemon(dispatch, getState, filters) {
+  console.log(filters)
   dispatch({type:types.REQUEST_POKE_TYPES})
 
   if (filters.defaultType.length) {

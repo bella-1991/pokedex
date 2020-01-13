@@ -20,7 +20,8 @@ export const DefaultFilters = {
     TYPE: 'all',
     SORT: 'REL',
     RPP: 10,
-    PAGE: 1
+    PAGE: 1,
+    ALL: 'all'
 }
 
 /*
