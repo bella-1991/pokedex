@@ -1,0 +1,8 @@
+.pokedex__header { position: relative; }
+
+.pokedex__heading { text-transform: capitalize; }
+
+.pokedex__back-button { position: absolute; color: #3cb6ce; border: 1px solid #3cb6ce; background-color: transparent; box-shadow: none; padding: 10px 20px; cursor: pointer; top: 0; left: 20px; border-radius: 4px; }  
+
+.pokedex__back-button:hover,
+.pokedex__back-button:focus { background-color: #3cb6ce; color: #ffffff; }
